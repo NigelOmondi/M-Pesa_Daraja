@@ -7,10 +7,11 @@ from django.views.generic import View
 from django_daraja.mpesa.core import MpesaClient
 from decouple import config
 from datetime import datetime
+from .models import AccessToken, StkPushResponse
 
 cl = MpesaClient()
-stk_push_callback_url = 'https://darajambili.herokuapp.com/express-payment'
-b2c_callback_url = 'https://darajambili.herokuapp.com/b2c/result'
+stk_push_callback_url = 'https://api.darajambili.com/express-payment'
+b2c_callback_url = 'https://api.darajambili.com/b2c/result'
 
 def index(request):
 
@@ -22,16 +23,25 @@ def oauth_success(request):
 
 def stk_push_success(request):
 	phone_number = config('LNM_PHONE_NUMBER')
-	amount = 1
+	amount = 3
 	account_reference = 'ABC001'
 	transaction_desc = 'STK Push Description'
 	callback_url = stk_push_callback_url
 	r = cl.stk_push(phone_number, amount, account_reference, transaction_desc, callback_url)
+
+	StkPushResponse.objects.create(
+		phone_number=phone_number,
+		amount=amount,
+		account_reference=account_reference,
+		transaction_desc=transaction_desc,
+		callback_url=callback_url,
+		response_description=r.response_description,
+	)
 	return JsonResponse(r.response_description, safe=False)
 
 def business_payment_success(request):
 	phone_number = config('B2C_PHONE_NUMBER')
-	amount = 1
+	amount = 2
 	transaction_desc = 'Business Payment Description'
 	occassion = 'Test business payment occassion'
 	callback_url = b2c_callback_url
