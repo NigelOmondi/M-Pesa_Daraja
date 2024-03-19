@@ -8,6 +8,8 @@ test_patterns = [
 	path('business-payment/success', views.business_payment_success, name='test_business_payment_success'),
 	path('salary-payment/success', views.salary_payment_success, name='test_salary_payment_success'),
 	path('promotion-payment/success', views.promotion_payment_success, name='test_promotion_payment_success'),
+	path('make-b2c-payment/', views.make_b2c_payment, name='make_b2c_payment'),
+    path('generate-access-token/', views.generate_access_token, name='generate_access_token'),
 ]
 
 urlpatterns = [
